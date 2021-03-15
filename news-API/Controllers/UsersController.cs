@@ -43,8 +43,8 @@ namespace news_API.Controllers
             var result = ResultObject.Ok<authReponse>(response,"Đăng nhập thành công");
             return Ok(result);
         }
-        [HttpGet("getAllUser")]
-        //[Authorize(Roles ="admin")]
+        [Authorize(Roles = "20,999")]
+        [HttpGet("getAllUser")]  
         public IEnumerable<User> getAllUser()
         {
             IEnumerable<User> allUser = _userService.GetAll();

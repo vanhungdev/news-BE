@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using news.Infrastructure.Enums;
+using news.Infrastructure.Models;
 using news_API.Entities;
 using news_API.models;
 using news_API.Services;
@@ -24,7 +25,6 @@ namespace news_API.Controllers
         {
             _postService = postService;
         }
-        [Authorize(Roles = "20,999")]
         [HttpGet("getAllPost")]
         public IEnumerable<Post> getAllPost()
         {
@@ -51,76 +51,75 @@ namespace news_API.Controllers
             return allPost;
         }
 
-        //[Authorize(Roles = "29, 999")]
+        //[Authorize(Roles = "20,999")]
         [HttpPost("EditPost")]
-        public CUDResult editPost(Post post)
+        public ActionResult editPost(Post post)
         {
 
             var status = _postService.editPost(post);
             if (status == 1)
             {
-                return new CUDResult(1, "Cập nhật thành công");
+                return Ok(ResultObject.Ok<NullDataType>(null,"Cập thật thành công."));
             }
-            return new CUDResult(0, "Cập nhật thất bại");
+            return Ok(ResultObject.Fail("Thất bại."));
         }
 
-        //[Authorize(Roles = "20,999")]
+        [Authorize(Roles = "20,999")]
         [HttpPost("createPost")]
-        public CUDResult createPost(Post post)
+        public ActionResult createPost(Post post)
         {
             var status = _postService.createPost(post);
             if (status == 1)
             {
-                return new CUDResult(1, "Cập nhật thành công");
+                return Ok(ResultObject.Ok<NullDataType>(null, "Thêm thật thành công."));
             }
-            return new CUDResult(0, "Cập nhật thất bại");
+            return Ok(ResultObject.Fail("Thất bại."));
         }
-        // 
+
+        [Authorize(Roles = "20,999")]
         [HttpGet("ChangeStatus")]
-        public CUDResult ChangeStatus(int Id, int Status)
+        public ActionResult ChangeStatus(int Id, int Status)
         {
-            if (Status < 1 || Status > 2)
-            {
-                return new CUDResult(0, "Thất bại,Trạng thái không hợp lệ.");
-            }
+          
             int result = _postService.changeStatusPost(Id, Status == 1 ? 2 : 1);
             if (result == 1)
             {
-                return new CUDResult(1, "Thay đổi trạng thái thành công.");
+                return Ok(ResultObject.Ok<NullDataType>(null, "Cập thật thành công."));
             }
-            return new CUDResult(0, "Thay đổi trạng thái thất bại.");
+            return Ok(ResultObject.Fail("Thất bại."));
         }
-
+        [Authorize(Roles = "20,999")]
         [HttpGet("Delete")]
-        public CUDResult Delete(int Id)
+        public ActionResult Delete(int Id)
         {
             int result = _postService.delete(Id);
             if (result == 1)
             {
-                return new CUDResult(1, "Xóa vĩnh viễn thành công");
+                return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
             }
-            return new CUDResult(0, "Xóa thất bại");
+            return Ok(ResultObject.Fail("Thất bại."));
         }
+        [Authorize(Roles = "20,999")]
         [HttpGet("DeTrash")]
-        public CUDResult deTrash(int Id)
+        public ActionResult deTrash(int Id)
         {
             int result = _postService.deTrash(Id);
             if (result == 1)
             {
-                return new CUDResult(1, "Xóa thành công");
+                return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
             }
-            return new CUDResult(0, "Xóa thất bại");
+            return Ok(ResultObject.Fail("Thất bại."));
         }
-
+        [Authorize(Roles = "20,999")]
         [HttpGet("ReTrash")]
-        public CUDResult reTrash(int Id)
+        public ActionResult reTrash(int Id)
         {
             int result = _postService.reTrash(Id);
             if (result == 1)
             {
-                return new CUDResult(1, "khôi phục thành công");
+                return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
             }
-            return new CUDResult(0, "Khôi phục thất bại");
+            return Ok(ResultObject.Fail("Thất bại."));
         }
 
         [HttpGet("getAllTopicTrash")]
@@ -129,7 +128,5 @@ namespace news_API.Controllers
             var list = _postService.getAllPostTrash();
             return list;
         }
-
-
     }
 }
