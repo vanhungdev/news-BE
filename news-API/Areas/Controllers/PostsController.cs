@@ -19,7 +19,7 @@ namespace news_API.Areas.Controllers
         {
             _postService = postService;
         }
-        [Authorize(Roles = "8888,20,999")]
+        [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
         public IEnumerable<Post> getAllPost()
         {
@@ -27,9 +27,9 @@ namespace news_API.Areas.Controllers
             return allPost;
         }
 
-        [Authorize(Roles = "20,999")]
+        [Authorize(Roles = "20,9999")]
         [HttpPost]
-        public ActionResult editPost(Post post)
+        public ActionResult editPost([FromBody] Post post)
         {
 
             var status = _postService.editPost(post);
@@ -40,9 +40,9 @@ namespace news_API.Areas.Controllers
             return Ok(ResultObject.Fail("Thất bại."));
         }
 
-        [Authorize(Roles = "20,999")]
+        [Authorize(Roles = "20,9999")]
         [HttpPost]
-        public ActionResult createPost(Post post)
+        public ActionResult createPost([FromBody] Post post)
         {
             var status = _postService.createPost(post);
             if (status == 1)
@@ -52,7 +52,7 @@ namespace news_API.Areas.Controllers
             return Ok(ResultObject.Fail("Thất bại."));
         }
 
-        [Authorize(Roles = "20,999")]
+        [Authorize(Roles = "20,9999")]
         [HttpGet]
         public ActionResult ChangeStatus(int Id, int Status)
         {
@@ -64,7 +64,7 @@ namespace news_API.Areas.Controllers
             }
             return Ok(ResultObject.Fail("Thất bại."));
         }
-        [Authorize(Roles = "20,999")]
+        [Authorize(Roles = "20,9999")]
         [HttpGet]
         public ActionResult Delete(int Id)
         {
@@ -75,7 +75,7 @@ namespace news_API.Areas.Controllers
             }
             return Ok(ResultObject.Fail("Thất bại."));
         }
-        [Authorize(Roles = "20,999")]
+        [Authorize(Roles = "20,9999")]
         [HttpGet]
         public ActionResult deTrash(int Id)
         {
@@ -86,7 +86,7 @@ namespace news_API.Areas.Controllers
             }
             return Ok(ResultObject.Fail("Thất bại."));
         }
-        [Authorize(Roles = "20,999")]
+        [Authorize(Roles = "20,9999")]
         [HttpGet]
         public ActionResult reTrash(int Id)
         {
@@ -98,7 +98,7 @@ namespace news_API.Areas.Controllers
             return Ok(ResultObject.Fail("Thất bại."));
         }
 
-        [Authorize(Roles = "8888,20,999")]
+        [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
         public IEnumerable<Post> getAllTopicTrash()
         {

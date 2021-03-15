@@ -25,6 +25,15 @@ namespace news.Api.Services
         authReponse Authenticate(AuthRequest model);
         IEnumerable<User> GetAll();
         User GetById(int id);
+        IEnumerable<User> getAllPostTrash();
+        IEnumerable<Role> GetAllRole();
+        int Edit(User user);
+
+        int delete(int Id);
+        int changeStatusPost(int Id, int Status);
+        int deTrash(int Id);
+        int reTrash(int Id);
+
     }
 
     public class UserService : IUserService
@@ -61,11 +70,96 @@ namespace news.Api.Services
 
         public User GetById(int id)
         {
-
-            throw new NotImplementedException();
+            //sp
+            string sql = "getUserById";
+            DynamicParameters parameter = new DynamicParameters();
+            parameter.Add("@Id", id, DbType.Int32, ParameterDirection.Input);
+            var listProduct = _query.Query<User>(1, sql, parameter).FirstOrDefault();
+            return listProduct;
+        }
+        public int changeStatusPost(int Id, int Status)
+        {
+            //SQL stored procedure 
+            string sql = "changeStatusUser";
+            DynamicParameters parameter = new DynamicParameters();
+            parameter.Add("@Id", Id, DbType.Int32, ParameterDirection.Input);
+            parameter.Add("@Status", Status, DbType.Int32, ParameterDirection.Input);
+            int result = _query.Execute(sql, parameter);
+            return result;
         }
 
-  
+        public int deTrash(int Id)
+        {
+            //SQL stored procedure 
+            string sql = "deTrashUserById";
+            DynamicParameters parameter = new DynamicParameters();
+            parameter.Add("@Id", Id, DbType.Int32, ParameterDirection.Input);
+            int result = _query.Execute(sql, parameter);
+            return result;
+        }
+
+        public int delete(int Id)
+        {
+            //SQL stored procedure 
+            string sql = "deleteUserById";
+            DynamicParameters parameter = new DynamicParameters();
+            parameter.Add("@Id", Id, DbType.Int32, ParameterDirection.Input);
+            int result = _query.Execute(sql, parameter);
+            return result;
+        }
+
+        public int reTrash(int Id)
+        {
+            //SQL stored procedure 
+            string sql = "changeStatusUser";
+            DynamicParameters parameter = new DynamicParameters();
+            parameter.Add("@Id", Id, DbType.Int32, ParameterDirection.Input);
+            parameter.Add("@Status", 2, DbType.Int32, ParameterDirection.Input);
+            int result = _query.Execute(sql, parameter);
+            return result;
+        }
+        public IEnumerable<User> getAllPostTrash()
+        {
+            string sql = "getAllUserTrash";
+            IEnumerable<User> listPost = _query.Query<User>(1, sql, null);
+            return listPost;
+        }
+
+        public IEnumerable<Role> GetAllRole()
+        {
+            string sql = "getAllRole";
+            var listPost = _query.Query<Role>(1, sql, null);
+            return listPost;
+        }
+
+        public int Edit(User user)
+        {
+            string sql = "updateUser";
+            DynamicParameters parameter = UserService.addAllParameterPost(user);
+            int status = _query.Execute(sql, parameter);
+            return status;
+        }
+
+        //
+        public static DynamicParameters addAllParameterPost(User user)
+        {
+            DynamicParameters parameter = new DynamicParameters();
+            parameter.Add("@Id", user.ID, DbType.Int32, ParameterDirection.Input);
+            parameter.Add("@fullname", user.fullname, DbType.String, ParameterDirection.Input);
+            parameter.Add("@username", user.username, DbType.String, ParameterDirection.Input);
+            parameter.Add("@password", user.password, DbType.String, ParameterDirection.Input);
+            parameter.Add("@email", user.email, DbType.String, ParameterDirection.Input);
+            parameter.Add("@gender", user.gender, DbType.String, ParameterDirection.Input);
+            parameter.Add("@phone", user.phone, DbType.String, ParameterDirection.Input);
+            parameter.Add("@img", user.img, DbType.String, ParameterDirection.Input);
+            parameter.Add("@access", user.access, DbType.Int32, ParameterDirection.Input);
+            parameter.Add("@Created_at", user.created_at, DbType.DateTime, ParameterDirection.Input);
+            parameter.Add("@Created_by", user.created_by, DbType.Int32, ParameterDirection.Input);
+            parameter.Add("@Updated_at", user.updated_at, DbType.DateTime, ParameterDirection.Input);
+            parameter.Add("@Updated_by", user.updated_by, DbType.Int32, ParameterDirection.Input);
+            parameter.Add("@Status", user.status, DbType.Int32, ParameterDirection.Input);
+            return parameter;
+        }
     }
 
 }

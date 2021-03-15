@@ -52,12 +52,10 @@ namespace news_API.Services
     
         public int editPost(Post post)
         {
-
             string sql = "updatePost";
             DynamicParameters parameter = PostService.addAllParameterPost(post);
             int status = _query.Execute(sql, parameter);
             return status;
-
         }
 
         public IEnumerable<Post> findPostById(int Id)
