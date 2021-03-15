@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace news_API.models
 {
-    public class authReponse
+      public class authReponse
     {
         public string token { get; set; }
         public User user { get; set; }

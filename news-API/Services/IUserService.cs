@@ -48,7 +48,7 @@ namespace news.Api.Services
             { 
                 return null;
             }
-            var tokenResult = JwtAuthManager.GenerateTokens(model, UserRole.Normal);
+            var tokenResult = JwtAuthManager.GenerateTokens(model, user.access);
             return new authReponse(tokenResult.AccessToken.ToString(),user);
         }
 

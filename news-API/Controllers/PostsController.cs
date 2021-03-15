@@ -17,6 +17,7 @@ namespace news_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
@@ -49,84 +50,6 @@ namespace news_API.Controllers
         {
             var allPost = _postService.getPostByCategoryId(id);
             return allPost;
-        }
-
-        //[Authorize(Roles = "20,999")]
-        [HttpPost("EditPost")]
-        public ActionResult editPost(Post post)
-        {
-
-            var status = _postService.editPost(post);
-            if (status == 1)
-            {
-                return Ok(ResultObject.Ok<NullDataType>(null,"Cập thật thành công."));
-            }
-            return Ok(ResultObject.Fail("Thất bại."));
-        }
-
-        [Authorize(Roles = "20,999")]
-        [HttpPost("createPost")]
-        public ActionResult createPost(Post post)
-        {
-            var status = _postService.createPost(post);
-            if (status == 1)
-            {
-                return Ok(ResultObject.Ok<NullDataType>(null, "Thêm thật thành công."));
-            }
-            return Ok(ResultObject.Fail("Thất bại."));
-        }
-
-        [Authorize(Roles = "20,999")]
-        [HttpGet("ChangeStatus")]
-        public ActionResult ChangeStatus(int Id, int Status)
-        {
-          
-            int result = _postService.changeStatusPost(Id, Status == 1 ? 2 : 1);
-            if (result == 1)
-            {
-                return Ok(ResultObject.Ok<NullDataType>(null, "Cập thật thành công."));
-            }
-            return Ok(ResultObject.Fail("Thất bại."));
-        }
-        [Authorize(Roles = "20,999")]
-        [HttpGet("Delete")]
-        public ActionResult Delete(int Id)
-        {
-            int result = _postService.delete(Id);
-            if (result == 1)
-            {
-                return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
-            }
-            return Ok(ResultObject.Fail("Thất bại."));
-        }
-        [Authorize(Roles = "20,999")]
-        [HttpGet("DeTrash")]
-        public ActionResult deTrash(int Id)
-        {
-            int result = _postService.deTrash(Id);
-            if (result == 1)
-            {
-                return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
-            }
-            return Ok(ResultObject.Fail("Thất bại."));
-        }
-        [Authorize(Roles = "20,999")]
-        [HttpGet("ReTrash")]
-        public ActionResult reTrash(int Id)
-        {
-            int result = _postService.reTrash(Id);
-            if (result == 1)
-            {
-                return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
-            }
-            return Ok(ResultObject.Fail("Thất bại."));
-        }
-
-        [HttpGet("getAllTopicTrash")]
-        public IEnumerable<Post> getAllTopicTrash()
-        {
-            var list = _postService.getAllPostTrash();
-            return list;
         }
     }
 }

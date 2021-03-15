@@ -23,7 +23,7 @@ namespace news_API.Entities
         public string phone { get; set; }
         public string img { get; set; }
 
-        public int access { get; set; }
+        public UserRole access { get; set; }
         public DateTime created_at { get; set; }
 
         public int created_by { get; set; }
