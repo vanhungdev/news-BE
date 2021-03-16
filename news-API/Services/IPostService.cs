@@ -157,7 +157,6 @@ namespace news_API.Services
             parameter.Add("@Status", post.Status, DbType.Int32, ParameterDirection.Input);
             return parameter;
         }
-
         public IEnumerable<Post> getAllPostTrash()
         {
             string sql = "getAllPostTrash";
