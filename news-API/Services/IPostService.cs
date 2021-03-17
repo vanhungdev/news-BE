@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using news.Database;
+using news.Infrastructure.Utilities;
 using news_API.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace news_API.Services
        
         IEnumerable<Post> getAllPost();
         IEnumerable<Post> findPostById(int Id);
-        public IEnumerable<Post> findPostBySlug(string slug);
+        public Post findPostBySlug(string slug);
         int createPost(Post post);
         int editPost(Post post);
         int deleteAnyPost(string[] arrayId);
@@ -38,6 +39,7 @@ namespace news_API.Services
         public int createPost(Post post)
         {
             post.Status = 1;
+            post.Slug = Helper.ToSlug(post.Title);
             string sql = "InsertPost";
             DynamicParameters parameter = PostService.addAllParameterPost(post);
             int status = _query.Execute(sql, parameter);
@@ -53,6 +55,7 @@ namespace news_API.Services
         public int editPost(Post post)
         {
             string sql = "updatePost";
+            post.Slug = Helper.ToSlug(post.Title);
             DynamicParameters parameter = PostService.addAllParameterPost(post);
             int status = _query.Execute(sql, parameter);
             return status;
@@ -69,14 +72,14 @@ namespace news_API.Services
         }
 
 
-        public IEnumerable<Post> findPostBySlug(string slug)
+        public Post findPostBySlug(string slug)
         {
             //sp
             string sql = "findPostBySlug";
             DynamicParameters parameter = new DynamicParameters();
             parameter.Add("@slug", slug, DbType.String, ParameterDirection.Input);
             var listProduct = _query.Query<Post>(1, sql, parameter);
-            return listProduct;
+            return listProduct.FirstOrDefault();
         }
 
         public IEnumerable<Post> getAllPost()
@@ -163,5 +166,7 @@ namespace news_API.Services
             IEnumerable<Post> listPost = _query.Query<Post>(1, sql, null);
             return listPost;
         }
+
+
     }
 }

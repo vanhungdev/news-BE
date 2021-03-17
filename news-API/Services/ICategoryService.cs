@@ -18,6 +18,7 @@ namespace news_API.Services
         IEnumerable<Category> getAllTopicTrash();
         int create(Category category);
         Category findById(int Id);
+        Category findBySlug(string slug);
         int edit(Category category);
         int delete(int Id);
         int changeStatusTopic(int Id, int Status);
@@ -129,6 +130,15 @@ namespace news_API.Services
             string sql = "getAllTopicTrash";
             IEnumerable<Category> listPost = _query.Query<Category>(1, sql, null);
             return listPost;
+        }
+
+        public Category findBySlug(string slug)
+        {
+            string sql = "getCategoryBySlug";
+            DynamicParameters parameter = new DynamicParameters();
+            parameter.Add("@Slug", slug, DbType.String, ParameterDirection.Input);
+            IEnumerable<Category> listPost = _query.Query<Category>(1, sql, parameter);
+            return listPost.FirstOrDefault();
         }
     }
 }

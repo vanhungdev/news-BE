@@ -39,17 +39,18 @@ namespace news_API.Controllers
             return post;
         }
         [HttpGet("findPostBySlug/{Slug}")]
-        public IEnumerable<Post> findPostBySlug(string slug)
+        public Post findPostBySlug(string slug)
         {
-            var allPost = _postService.findPostBySlug(slug);
-            return allPost;
+            Post post = _postService.findPostBySlug(slug);
+            return post;
         }
 
-        [HttpGet("getPostByCategoryId/{id}")]
-        public IEnumerable<Post> findPostBySlug(int id)
+        [HttpGet("getallPostByCategoryId/{id}")]
+        public IEnumerable<Post> getallPostByCategoryId(int id)
         {
             var allPost = _postService.getPostByCategoryId(id);
             return allPost;
         }
+
     }
 }

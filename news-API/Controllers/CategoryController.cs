@@ -35,5 +35,11 @@ namespace news_API.Controllers
             Category list = _categoryService.findById(id);
             return list;
         }
+        [HttpGet("findBySlug/{slug}")]
+        public Category findBySlug(string slug)
+        {
+            Category cate = _categoryService.findBySlug(slug);
+            return cate;
+        }
     }
 }
