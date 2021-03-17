@@ -46,6 +46,11 @@ namespace news_API
             services.AddScoped<ICommentService, CommentService>();
             services.AddDistributedMemoryCache();
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost:6379";
+            });
+
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
