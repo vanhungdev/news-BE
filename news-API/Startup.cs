@@ -25,6 +25,7 @@ using MediatR.Pipeline;
 using news.Application.Behaviours;
 using FluentValidation;
 using news.Application.Common;
+using Microsoft.OpenApi.Models;
 
 namespace news_API
 {
@@ -50,9 +51,17 @@ namespace news_API
             services.AddSingleton<IQuery, Sqlsever>();
             services.AddControllersWithViews();
             services.AddApplication();
-
-
-
+            services.AddSwaggerGen(c=> {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "newss",Version ="v1"});
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                 {
+                     Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+                     Name = "Authorization",
+                     In = ParameterLocation.Header,
+                     Type = SecuritySchemeType.ApiKey,
+                     Scheme = "Bearer"
+                 });
+            });
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRedisCacheDB, RedisCacheDB>();
             services.AddStackExchangeRedisCache(options =>
@@ -77,6 +86,11 @@ namespace news_API
             //app.UseStaticFiles();
             app.UseSerilogRequestLogging(); // <-- Add this line                                           //app.UseHttpsRedirection();
             app.UseCors("CorsPolicy");
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "news Api");
+            });
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

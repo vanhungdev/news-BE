@@ -44,7 +44,7 @@ namespace news.Application.Category.Commands
         {
             RuleFor(v => v.Id).GreaterThan(0).WithMessage("Id phải lớn hơn 0");
             RuleFor(v => v.Id).NotNull().WithMessage("Id Không được Null");
-            RuleFor(v => v.Status).LessThan(2).WithMessage("Status phải bé hơn 2");
+            RuleFor(v => v.Status).LessThan(3).WithMessage("Status phải bé hơn 3");
             RuleFor(v => v.Id).NotNull().WithMessage("Status Không được Null");
         }
     }
