@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using news.Infrastructure.Models;
-using news_API.Entities;
 using news_API.models;
-using news_API.Services;
+using news.Application.Category.Commands;
+using news.Application.Category.Queries;
 
 namespace news_API.Controllers
 {
@@ -17,29 +18,29 @@ namespace news_API.Controllers
     [ApiController]
     [AllowAnonymous]
     public class CategoryController : ControllerBase
-    {
-        private ICategoryService _categoryService;
-        public CategoryController(ICategoryService categoryService)
-        {
-            _categoryService = categoryService;
+    {     
+        private readonly IMediator _mediator;
+        public CategoryController(IMediator mediator)
+        {           
+            _mediator = mediator;
         }
         [HttpGet("getAll")]
-        public IEnumerable<Category> getAll()
+        public async Task<ActionResult>  getAll()
         {
-            var list = _categoryService.getAll();
-            return list;
+            var result = _mediator.Send(new GetAllCategory());
+            return Ok(await result);
         }
         [HttpGet("findById/{id}")]
-        public Category findById(int id)
+        public async Task<ActionResult> findById(int id)
         {
-            Category list = _categoryService.findById(id);
-            return list;
+            var result = _mediator.Send(new GetCategoryById { Id =id});
+            return Ok(await result);
         }
-        [HttpGet("findBySlug/{slug}")]
-        public Category findBySlug(string slug)
+        [HttpGet("findBySlug/{Slug}")]
+        public async Task<ActionResult> findBySlug(string slug)
         {
-            Category cate = _categoryService.findBySlug(slug);
-            return cate;
+            var result = _mediator.Send(new GetCategoryBySlug { slug = slug });
+            return Ok(await result);
         }
     }
 }

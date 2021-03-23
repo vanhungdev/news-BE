@@ -32,14 +32,12 @@ namespace news_API.Infrastructure.Auth
                     context.Fail("The authorization header is empty.");
                     return Task.CompletedTask;
                 }
-
-                //string token = !string.IsNullOrWhiteSpace(mbsExternal) ? mbsExternal : mbsInternal;
-                //if (JwtAuthManager.IsExistInBlacklist(context.Principal.FindFirstValue(Consts.CLAIM_USERNAME) ?? string.Empty, token, string.Empty))
-                //{
-                //    context.Fail("Token is blocked.");
-                //    return Task.CompletedTask;
-                //}
-
+                string token =  mbsExternal;
+                if (JwtAuthManager.IsExistInBlacklist(context.Principal.FindFirstValue(Consts.CLAIM_USERNAME) ?? string.Empty, token, string.Empty))
+                {
+                    context.Fail("Token is blocked.");
+                    return Task.CompletedTask;
+                }
                 var claims = new[] {
                     new Claim(ClaimTypes.Role,
                         ((int)Enum.Parse(typeof(UserRole), context.Principal.FindFirstValue(Consts.CLAIM_USERTYPE)
@@ -50,7 +48,6 @@ namespace news_API.Infrastructure.Auth
                 return Task.CompletedTask;
             };
         }
-
         /// <summary>
         /// Invoked when a protocol message is first received.
         /// </summary>
@@ -101,7 +98,6 @@ namespace news_API.Infrastructure.Auth
                     response.Code = ResultCode.ErrorTokenExpired;
                     response.Message.Message = "Phiên làm việc của bạn đã kết thúc. Vui lòng đăng nhập lại.";
                 }
-
                 context.HttpContext.Response.ContentType = "application/json; charset=utf-8";
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                 context.HttpContext.Response.WriteAsync(JsonConvert.SerializeObject(response)).Wait();

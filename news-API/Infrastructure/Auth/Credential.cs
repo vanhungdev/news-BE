@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using news.Infrastructure.Enums;
 using System.Threading.Tasks;
-using news_API.Entities;
 
 namespace news_API.Infrastructure.Auth
 {

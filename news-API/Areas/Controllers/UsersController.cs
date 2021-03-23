@@ -2,52 +2,61 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using news.Api.Services;
+using news.Application.User.CommandHandler;
+using news.Application.User.Queries;
+using news.Application.User.QueryHandler;
 using news.Infrastructure.Models;
-using news_API.Entities;
 
 namespace news_API.Areas.Controllers
 {
     [Area("Admin")]
     public class UsersController : Controller
     {
-        private IUserService _userService;
-
-        public UsersController(IUserService userService)
+        private readonly IMediator _mediator;
+        public UsersController(IMediator mediator)
         {
-            _userService = userService;
+            _mediator = mediator;
         }
         [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
-        public IEnumerable<User> getAllUser()
+        public async Task<ActionResult> getAllUser()
         {
-            IEnumerable<User> allUser = _userService.GetAll();
-            return allUser;
+            var result = _mediator.Send(new GetAllUserRequest());
+            return Ok(await result);
         }
        
         [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
-        public User findUserById(int id)
+        public async Task<ActionResult> findUserById(int id)
         {
-            User post = _userService.GetById(id);
-            return post;
+            var result = _mediator.Send(new GetUserByIdRequest { Id = id });
+            return Ok(await result);
         }
         [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
-        public IEnumerable<Role> getAllRole()
+        public async Task<ActionResult> getAllRole()
         {
-           var list  = _userService.GetAllRole();
-            return list;
+            var result = _mediator.Send(new GetAllRoleRequest());
+            return Ok(await result);
         }
         
         // only 9999
         [Authorize(Roles = "9999")]
         [HttpGet]
-        public ActionResult ChangeStatus(int Id, int Status)
+        public async Task<ActionResult> ChangeStatus(int Id, int Status)
         {
-            int result = _userService.changeStatusPost(Id, Status == 1 ? 2 : 1);
+            if (Status == 2)
+            {
+                Status = 1;
+            }
+            else
+            {
+                Status = 2;
+            }
+            int result = await _mediator.Send(new ChangeStatusUserRequest { Id = Id, Status = Status });
             if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Cập thật thành công."));
@@ -56,9 +65,9 @@ namespace news_API.Areas.Controllers
         }
         [Authorize(Roles = "9999")]
         [HttpGet]
-        public ActionResult Delete(int Id)
+        public async Task<ActionResult> Delete(int Id)
         {
-            int result = _userService.delete(Id);
+            var result = await _mediator.Send(new DeleteUserRequest { Id = Id });
             if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
@@ -67,9 +76,9 @@ namespace news_API.Areas.Controllers
         }
         [Authorize(Roles = "9999")]
         [HttpGet]
-        public ActionResult deTrash(int Id)
+        public async Task<ActionResult> deTrash(int Id)
         {
-            int result = _userService.deTrash(Id);
+            var result = await _mediator.Send(new DeTrashUserRequest { Id = Id });
             if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
@@ -78,9 +87,9 @@ namespace news_API.Areas.Controllers
         }
         [Authorize(Roles = "9999")]
         [HttpGet]
-        public ActionResult reTrash(int Id)
+        public async Task<ActionResult> reTrash(int Id)
         {
-            int result = _userService.reTrash(Id);
+            var result = await _mediator.Send(new ReTrashUserRequest { Id = Id });
             if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Khôi phục thành công."));
@@ -90,17 +99,17 @@ namespace news_API.Areas.Controllers
 
         [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
-        public IEnumerable<User> getAllTopicTrash()
+        public async Task<ActionResult> getAllTopicTrash()
         {
-            var list = _userService.getAllPostTrash();
-            return list.ToList();
+            var result = await _mediator.Send(new GetAllUserTrashRequest());
+            return Ok(result);
         }
         [Authorize(Roles = "9999")]
         [HttpPost]
-        public ActionResult editUser([FromBody] User user)
+        public async Task<ActionResult> editUser([FromBody] EditUserRequest user)
         {
-            var status = _userService.Edit(user);
-            if (status == 1)
+            var result = await _mediator.Send(user);
+            if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Cập thật thành công."));
             }

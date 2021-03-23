@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using news.Infrastructure.Consts;
+using news.Infrastructure.Database;
 using news.Infrastructure.Enums;
 using news.Infrastructure.Utilities;
 using news_API.models;
@@ -225,7 +226,8 @@ namespace news_API.Infrastructure.Auth
         {
             try
             {
-                // TODO
+                string key = string.Format(CacheKeys.AUTHEN, userName.ToUpper());
+                RedisDb.saveTokenToBlackRedis(key, accessToken);
             }
             catch (Exception ex)
             {
@@ -236,23 +238,23 @@ namespace news_API.Infrastructure.Auth
         /// <summary>
         /// IsExistInBlacklist
         /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="accessToken"></param>
-        /// <param name="refreshToken"></param>
-        //public static bool IsExistInBlacklist(string userName, string accessToken, string refreshToken)
-        //{
-        //    try
-        //    {
-        //        string key = string.Format(CacheKeys.AUTHEN, userName.ToUpper());
-        //        var backlist = RedisDb.SortedSetRange(key);
-        //        return backlist.Any(x => x.Equals(accessToken ?? "") || x.Equals(refreshToken ?? ""));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // TODO
-        //        return false;
-        //    }
-        //}
+        /// <param name = "userName" ></ param >
+        /// < param name="accessToken"></param>
+        /// <param name = "refreshToken" ></ param >
+        public static bool IsExistInBlacklist(string userName, string accessToken, string refreshToken)
+        {
+            try
+            {
+                string key = string.Format(CacheKeys.AUTHEN, userName.ToUpper());
+                var backlist = RedisDb.SortedSetRange(key);
+                return backlist.Any(x => x.Equals(accessToken ?? "") || x.Equals(refreshToken ?? ""));
+            }
+            catch (Exception ex)
+            {
+                // TODO
+                return false;
+            }
+        }
     }
 
 }

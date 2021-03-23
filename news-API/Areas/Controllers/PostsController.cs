@@ -2,37 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using news.Application.Entities;
+using news.Application.Post.CommandHandler;
+using news.Application.Post.Queries;
 using news.Infrastructure.Models;
-using news_API.Entities;
-using news_API.Services;
-
 namespace news_API.Areas.Controllers
 {
     [Area("Admin")]
     public class PostsController : Controller
     {
-        private readonly IPostService _postService;
-
-        public PostsController(IPostService postService)
+        private readonly IMediator _mediator;
+        public PostsController(IMediator mediator)
         {
-            _postService = postService;
+            _mediator = mediator;
         }
         [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
-        public IEnumerable<Post> getAllPost()
+        public async Task<ActionResult> getAllPost()
         {
-            IEnumerable<Post> allPost = _postService.getAllPost();
-            return allPost;
+            var allPost = await _mediator.Send(new GetAllPostRequest());
+            return Ok(allPost);
         }
 
         [Authorize(Roles = "20,9999")]
         [HttpPost]
-        public ActionResult editPost([FromBody] Post post)
+        public async Task<ActionResult> editPost([FromBody] EditPostRequest post)
         {
 
-            var status = _postService.editPost(post);
+            var status = await _mediator.Send(post);
             if (status == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Cập thật thành công."));
@@ -42,9 +42,9 @@ namespace news_API.Areas.Controllers
 
         [Authorize(Roles = "20,9999")]
         [HttpPost]
-        public ActionResult createPost([FromBody] Post post)
+        public async Task<ActionResult> createPost([FromBody] CreatePostRequest post)
         {
-            var status = _postService.createPost(post);
+            var status = await _mediator.Send(post);
             if (status == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Thêm thật thành công."));
@@ -54,10 +54,17 @@ namespace news_API.Areas.Controllers
 
         [Authorize(Roles = "20,9999")]
         [HttpGet]
-        public ActionResult ChangeStatus(int Id, int Status)
+        public async Task<ActionResult> ChangeStatus(int Id, int Status)
         {
-
-            int result = _postService.changeStatusPost(Id, Status == 1 ? 2 : 1);
+            if (Status == 2)
+            {
+                Status = 1;
+            }
+            else
+            {
+                Status = 2;
+            }
+            int result = await _mediator.Send(new ChangeStatusPostRequest { Id = Id, Status = Status });
             if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Cập thật thành công."));
@@ -66,9 +73,9 @@ namespace news_API.Areas.Controllers
         }
         [Authorize(Roles = "20,9999")]
         [HttpGet]
-        public ActionResult Delete(int Id)
+        public async Task<ActionResult> Delete(int Id)
         {
-            int result = _postService.delete(Id);
+            int result = await _mediator.Send(new DeletePostRequest { Id = Id });
             if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
@@ -77,9 +84,9 @@ namespace news_API.Areas.Controllers
         }
         [Authorize(Roles = "20,9999")]
         [HttpGet]
-        public ActionResult deTrash(int Id)
+        public async Task<ActionResult> deTrash(int Id)
         {
-            int result = _postService.deTrash(Id);
+            int result = await _mediator.Send(new DeTrashPostRequest { Id = Id });
             if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
@@ -88,22 +95,21 @@ namespace news_API.Areas.Controllers
         }
         [Authorize(Roles = "20,9999")]
         [HttpGet]
-        public ActionResult reTrash(int Id)
+        public async Task<ActionResult> reTrash(int Id)
         {
-            int result = _postService.reTrash(Id);
+            int result = await _mediator.Send(new ReTrashPostRequest { Id = Id });
             if (result == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Xóa thành công."));
             }
             return Ok(ResultObject.Fail("Thất bại."));
         }
-
         [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
-        public IEnumerable<Post> getAllTopicTrash()
+        public async Task<ActionResult> getAllPostTrash()
         {
-            var list = _postService.getAllPostTrash();
-            return list;
+            var allPost = await _mediator.Send(new GetAllPostTrashRequest());
+            return Ok(allPost);
         }
     }
 }

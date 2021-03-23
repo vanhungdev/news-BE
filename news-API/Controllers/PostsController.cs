@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using news.Application.Post.Queries;
 using news.Infrastructure.Enums;
 using news.Infrastructure.Models;
-using news_API.Entities;
 using news_API.models;
-using news_API.Services;
 
 namespace news_API.Controllers
 {
@@ -20,36 +20,35 @@ namespace news_API.Controllers
     [AllowAnonymous]
     public class PostsController : ControllerBase
     {
-        private readonly IPostService _postService;
-
-        public PostsController(IPostService postService)
+        private readonly IMediator _mediator;
+        public PostsController(IMediator mediator)
         {
-            _postService = postService;
+            _mediator = mediator;
         }
         [HttpGet("getAllPost")]
-        public IEnumerable<Post> getAllPost()
+        public async Task<ActionResult> getAllPost()
         {
-            IEnumerable<Post> allPost = _postService.getAllPost();
-            return allPost;
+            var allPost = await _mediator.Send(new GetAllPostRequest());
+            return Ok( allPost);
         }
         [HttpGet("findPostById/{id}")]
-        public Post findPostById(int id)
+        public async Task<ActionResult> findPostById(int id)
         {
-            Post post = _postService.findPostById(id).FirstOrDefault();
-            return post;
+            var post = await _mediator.Send(new GetPostByIdRequest { Id = id});
+            return Ok(post);
         }
         [HttpGet("findPostBySlug/{Slug}")]
-        public Post findPostBySlug(string slug)
+        public async Task<ActionResult> findPostBySlug(string slug)
         {
-            Post post = _postService.findPostBySlug(slug);
-            return post;
+            
+            var post = await _mediator.Send(new GetPostBySlug { slug = slug });
+            return Ok(post);
         }
-
         [HttpGet("getallPostByCategoryId/{id}")]
-        public IEnumerable<Post> getallPostByCategoryId(int id)
+        public async Task<ActionResult> getallPostByCategoryId(int id)
         {
-            var allPost = _postService.getPostByCategoryId(id);
-            return allPost;
+            var List = await _mediator.Send(new GetAllPostByCategoryId { Catid  = id});
+            return Ok(List);
         }
 
     }

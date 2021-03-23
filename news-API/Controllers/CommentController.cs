@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using news.Application.Comment.Commands;
+using news.Application.Comment.Queries;
 using news.Infrastructure.Models;
-using news_API.Entities;
-using news_API.Services;
 
 namespace news_API.Controllers
 {
@@ -15,23 +16,22 @@ namespace news_API.Controllers
     [AllowAnonymous]
     public class CommentController : Controller
     {
-        private readonly ICommentService _commentService;
-
-        public CommentController(ICommentService commentService)
+        private readonly IMediator _mediator;
+        public CommentController(IMediator mediator)
         {
-            _commentService = commentService;
+            _mediator = mediator;
         }
         [HttpGet("GetAllCommentByPost/{Id}")]
-        public IEnumerable<Comment> GetAllCommentByPost(int Id)
+        public async Task<ActionResult> GetAllCommentByPost(int Id)
         {
-            var listComment = _commentService.GetAllCommentByPost(Id);
-            return listComment;
+            var result = await _mediator.Send(new GetAllCommentByPostId { postId = Id});          
+            return Ok (result);
         }
 
         [HttpPost("createComment")]
-        public ActionResult createComment([FromBody] Comment comment)
+        public async Task<ActionResult> createComment([FromBody] CreateCommentRequest comment)
         {
-            var status = _commentService.create(comment);
+            var status = await _mediator.Send(comment);
             if (status == 1)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Thêm  thành công."));

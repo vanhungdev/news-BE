@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace news_API.Entities
+namespace news.Application.Entities
 {
     public class Comment
     {
-        public int Id{get;set;}
+        public int Id { get; set; }
         public int PostId { get; set; }
         public int ParentId { get; set; }
         public string CommentDetail { get; set; }
@@ -15,6 +14,5 @@ namespace news_API.Entities
         public int Star { get; set; }
         public DateTime Create_at { get; set; }
         public int Status { get; set; }
-
     }
 }

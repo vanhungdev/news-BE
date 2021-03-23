@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace news_API.Entities
+namespace news.Application.Entities
 {
-    public partial class Post
+    public class Post
     {
         public int ID { get; set; }
         public int Topid { get; set; }

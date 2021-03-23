@@ -20,6 +20,12 @@ namespace news.Infrastructure.Utilities
             string encodedText = Convert.ToBase64String(plainTextBytes);
             return CreateMD5(encodedText);
         }
+
+        public static string ToSlug(object title)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// 
         /// </summary>

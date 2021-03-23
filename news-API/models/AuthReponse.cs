@@ -1,4 +1,4 @@
-﻿using news_API.Entities;
+﻿using news.Application.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
