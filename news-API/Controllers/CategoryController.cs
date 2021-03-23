@@ -21,7 +21,7 @@ namespace news_API.Controllers
     {     
         private readonly IMediator _mediator;
         public CategoryController(IMediator mediator)
-        {           
+        {
             _mediator = mediator;
         }
         [HttpGet("getAll")]

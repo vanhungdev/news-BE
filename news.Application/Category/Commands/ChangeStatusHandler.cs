@@ -25,8 +25,6 @@ namespace news.Application.Category.Commands
         {
             _query = query;
         }
-
-
         public async Task<int> Handle(ChangeStatusCategoryRequest request, CancellationToken cancellationToken)
         {
             //SQL stored procedure 

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using FluentValidation;
 using MediatR;
 using news.Database;
 using news.Infrastructure.Utilities;
@@ -66,5 +67,14 @@ namespace news.Application.Post.CommandHandler
             return parameter;
         }
 
+    }
+    public class CreatePostRequestValidator : AbstractValidator<CreatePostRequest>
+    {
+        public CreatePostRequestValidator()
+        {
+            RuleFor(v => v.Topid).NotNull();
+            RuleFor(v => v.Title).NotNull();
+            RuleFor(v => v.Detail).NotNull();
+        }
     }
 }

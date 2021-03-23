@@ -47,7 +47,6 @@ namespace news_API
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             // meidaTR
-            
             services.AddSingleton<IQuery, Sqlsever>();
             services.AddControllersWithViews();
             services.AddApplication();
@@ -55,7 +54,7 @@ namespace news_API
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "newss",Version ="v1"});
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                  {
-                     Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+                     Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer -token-')",
                      Name = "Authorization",
                      In = ParameterLocation.Header,
                      Type = SecuritySchemeType.ApiKey,
@@ -84,7 +83,7 @@ namespace news_API
                 app.UseDeveloperExceptionPage();
             }
             //app.UseStaticFiles();
-            app.UseSerilogRequestLogging(); // <-- Add this line                                           //app.UseHttpsRedirection();
+            app.UseSerilogRequestLogging(); // <-- Add this line //app.UseHttpsRedirection();
             app.UseCors("CorsPolicy");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
