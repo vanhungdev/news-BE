@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using FluentValidation;
 using MediatR;
 using news.Database;
 using news.Infrastructure.Utilities;
@@ -61,6 +62,16 @@ namespace news.Application.Category.Commands
             parameter.Add("@Status", 1, DbType.Int32, ParameterDirection.Input);
             return parameter;
         }
-
+    }
+    public class CreateCategoryRequestValidator : AbstractValidator<CreateCategoryRequest>
+    {
+        public CreateCategoryRequestValidator()
+        {
+            RuleFor(v => v.Id).GreaterThan(0).WithMessage("Id phải lớn hơn 0");
+            RuleFor(v => v.Id).NotNull().WithMessage("Id Không được Null");
+            RuleFor(v => v.Name).NotNull();
+            RuleFor(v => v.Slug).NotNull();
+            RuleFor(v => v.Parentid).NotNull();
+        }
     }
 }

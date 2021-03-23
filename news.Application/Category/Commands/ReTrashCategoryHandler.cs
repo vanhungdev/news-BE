@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using FluentValidation;
 using MediatR;
 using news.Database;
 using System;
@@ -29,6 +30,14 @@ namespace news.Application.Category.Commands
             parameter.Add("@Status", 2, DbType.Int32, ParameterDirection.Input);
             int result = _query.Execute(sql, parameter);
             return await Task.FromResult(result);
+        }
+    }
+    public class ReTrashCategoryRequestValidator : AbstractValidator<ReTrashCategoryRequest>
+    {
+        public ReTrashCategoryRequestValidator()
+        {
+            RuleFor(v => v.Id).GreaterThan(0).WithMessage("Id phải lớn hơn 0");
+            RuleFor(v => v.Id).NotNull().WithMessage("Id Không được Null");
         }
     }
 }
