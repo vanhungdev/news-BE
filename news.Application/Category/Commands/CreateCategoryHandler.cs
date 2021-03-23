@@ -42,7 +42,6 @@ namespace news.Application.Category.Commands
             string sql = "createCategory";
             DynamicParameters parameter = CreateCategoryHandler.addAllParameterCategory(request);
             int result = _query.Execute(sql, parameter);
-
             return await Task.FromResult(result);
         }
         public static DynamicParameters addAllParameterCategory(CreateCategoryRequest category)

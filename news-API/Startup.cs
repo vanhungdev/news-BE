@@ -46,10 +46,13 @@ namespace news_API
             // configure strongly typed settings object
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
-            // meidaTR
             services.AddSingleton<IQuery, Sqlsever>();
             services.AddControllersWithViews();
+
+            // meidaTR
             services.AddApplication();
+
+            // Swagger
             services.AddSwaggerGen(c=> {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "newss",Version ="v1"});
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -61,18 +64,27 @@ namespace news_API
                      Scheme = "Bearer"
                  });
             });
+
+            
             services.AddScoped<IUserService, UserService>();
+            //redis DB
             services.AddScoped<IRedisCacheDB, RedisCacheDB>();
+
+            //redis cache
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = "localhost:6379";
             });
+
+            //CorsPolicy
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
+
+            //auththen JWT
             services.AddCustomAuthentication(Configuration);
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,12 +96,15 @@ namespace news_API
             }
             //app.UseStaticFiles();
             app.UseSerilogRequestLogging(); // <-- Add this line //app.UseHttpsRedirection();
+
             app.UseCors("CorsPolicy");
+            //swagger
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "news Api");
             });
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
