@@ -1,31 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MediatR;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using news.Database;
 using news.Infrastructure.Configuration;
 using news.Infrastructure.Database;
+using news.Infrastructure.Logging;
+using news.Infrastructure.Utilities;
 using news_API.Infrastructure.Extensions;
-using news_API.Services;
+using news_API.Infrastructure.Middleware;
 using Serilog;
-using Microsoft.Extensions.DependencyInjection;
-using MediatR.Pipeline;
-using news.Application.Behaviours;
-using FluentValidation;
-using news.Application.Common;
-using Microsoft.OpenApi.Models;
+using System;
 
 namespace news_API
 {
@@ -41,48 +27,17 @@ namespace news_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
-            // configure strongly typed settings object
+            services.AddCustomMvc(Configuration);
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddHttpServices(Configuration);
 
-            services.AddSingleton<IQuery, Sqlsever>();
-            services.AddControllersWithViews();
-
-            // meidaTR
-            services.AddApplication();
-
-            // Swagger
-            services.AddSwaggerGen(c=> {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "newss",Version ="v1"});
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                 {
-                     Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer -token-')",
-                     Name = "Authorization",
-                     In = ParameterLocation.Header,
-                     Type = SecuritySchemeType.ApiKey,
-                     Scheme = "Bearer"
-                 });
-            });
-
-            
-            services.AddScoped<IUserService, UserService>();
             //redis DB
             services.AddScoped<IRedisCacheDB, RedisCacheDB>();
-
             //redis cache
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = "localhost:6379";
             });
-
-            //CorsPolicy
-            services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
-            }));
 
             //auththen JWT
             services.AddCustomAuthentication(Configuration);
@@ -94,23 +49,38 @@ namespace news_API
             {
                 app.UseDeveloperExceptionPage();
             }
-            //app.UseStaticFiles();
-            app.UseSerilogRequestLogging(); // <-- Add this line //app.UseHttpsRedirection();
+            //logging
+            app.ApplicationServices.CreateLoggerConfiguration(env);
 
-            app.UseCors("CorsPolicy");
+            //add read appseting.json
+            AppSettingServices.Services = app.ApplicationServices;
+            // 
+            Helper.ConfigureContextAccessor(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
+            LoggingHelper.Config(app.ApplicationServices.GetRequiredService<IDiagnosticContext>());
+            //logging
+            app.UseSerilogRequestLogging(opts =>
+            {
+                opts.EnrichDiagnosticContext = DiagnosticContext.EnrichFromRequest;
+            });
+
+            app.UseSerilogRequestLogging();           
             //swagger
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "news Api");
             });
+            app.UseMiddleware<Maintenancemiddleware>();
+            app.UseMiddleware<LoggingMiddleware>();
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
-            app.UseRouting();
+            app.UseCustomStaticFiles(env);
+            app.UseRouting();       
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                 endpoints.MapControllerRoute(
+                endpoints.MapControllerRoute(
                 name: "MyArea",
                 pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
                 endpoints.MapControllers();

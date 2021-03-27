@@ -1,4 +1,5 @@
-﻿using System;
+﻿using news.Infrastructure.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,6 +9,28 @@ namespace news.Infrastructure.Utilities
 {
     public static partial class Helper
     {
+        public static AppSettings Settings => AppSettingServices.Get;
+
+        public static string GetEnvironmentUrl(string path)
+        {
+            return path.Replace("{environment}", Settings.CommonSettings.StaticStorage);
+        }
+
+        public static bool IsDevelopment()
+        {
+            return Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower().Equals("development");
+        }
+
+        public static bool IsStaging()
+        {
+            return Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower().Equals("staging");
+        }
+
+        public static bool IsProduction()
+        {
+            return Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").ToLower().Equals("production");
+        }
+
         /// <summary>
         /// checksum du lieu giong MBS VN 3.0
         /// </summary>

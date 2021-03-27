@@ -10,13 +10,12 @@ using news.Infrastructure.Models;
 using news_API.models;
 using news.Application.Category.Commands;
 using news.Application.Category.Queries;
+using news_API.Infrastructure.Filters;
 
 namespace news_API.Controllers
 {
-
     [Route("api/[controller]")]
-    [ApiController]
-    [AllowAnonymous]
+    [ApiController]  
     public class CategoryController : ControllerBase
     {     
         private readonly IMediator _mediator;
@@ -24,6 +23,7 @@ namespace news_API.Controllers
         {
             _mediator = mediator;
         }
+        [Authorize(Roles = "8888,20,9999")]
         [HttpGet("getAll")]
         public async Task<ActionResult>  getAll()
         {
@@ -36,6 +36,7 @@ namespace news_API.Controllers
             var result = _mediator.Send(new GetCategoryById { Id =id});
             return Ok(await result);
         }
+        
         [HttpGet("findBySlug/{Slug}")]
         public async Task<ActionResult> findBySlug(string slug)
         {

@@ -42,6 +42,7 @@ namespace news_API.Infrastructure.Auth
                     claims = new Claim[]
                     {
                         new Claim("Username",user.Username),
+
                         new Claim(ClaimTypes.Role,((int) Enum.Parse(typeof(UserRole), role.ToString())).ToString()),
                         
                     };

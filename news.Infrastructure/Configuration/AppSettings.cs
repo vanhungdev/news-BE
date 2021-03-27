@@ -1,15 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static news.Infrastructure.Configuration.AppSettingDetail;
 
 namespace news.Infrastructure.Configuration
 {
     public class AppSettings
     {
-        public string Secret { get; set; }
+        public CommonSettings CommonSettings { get; set; }
+        public SecuritySettings SecuritySettings { get; set; }
+        public string AppName { get; set; }
     }
     public class AppSettingDetail
     {
+        public class CommonSettings
+        {
+            public string StaticStorage { get; set; }
+
+            public int IsMaintain { get; set; }
+        }
+
         public class SecuritySettings
         {
             public string PartnerKey { get; set; }
