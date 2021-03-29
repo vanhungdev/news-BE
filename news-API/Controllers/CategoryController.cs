@@ -23,7 +23,6 @@ namespace news_API.Controllers
         {
             _mediator = mediator;
         }
-        [Authorize(Roles = "8888,20,9999")]
         [HttpGet("getAll")]
         public async Task<ActionResult>  getAll()
         {

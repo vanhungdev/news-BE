@@ -29,14 +29,11 @@ namespace news_API
         {
             services.AddCustomMvc(Configuration);
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddHttpServices(Configuration);
-
-            //redis DB
-            services.AddScoped<IRedisCacheDB, RedisCacheDB>();
+            services.AddHttpServices(Configuration);     
             //redis cache
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = "localhost:6379";
+                options.Configuration = Helper.Settings.RedisSettings.ServerRead;
             });
 
             //auththen JWT

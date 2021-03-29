@@ -27,6 +27,7 @@ namespace news_API.Infrastructure.Auth
         {
             return context =>
             {
+
                 if ( !context.HttpContext.Request.Headers.TryGetValue(Consts.HEADER_AUTHORIZATION, out var mbsExternal))
                 {
                     context.Fail("The authorization header is empty.");
@@ -49,34 +50,18 @@ namespace news_API.Infrastructure.Auth
             };
         }
         /// <summary>
-        /// Invoked when a protocol message is first received.
+        /// Invoked when a protocol message is first received.  
         /// </summary>
         /// <returns></returns>
         public static Func<MessageReceivedContext, Task> OnMessageReceivedHandler()
         {
+            
             return context =>
-            {
+            {                
                 if (context.HttpContext.Request.Headers.TryGetValue(Consts.HEADER_AUTHORIZATION, out var mbsExternal))
                 {
                     context.Token = mbsExternal;
                 }
-
-                if (context.HttpContext.Request.Headers.TryGetValue(Consts.HEADER_PARTNER, out var mbsPartner)
-                    && string.IsNullOrWhiteSpace(mbsExternal))
-                {
-                    var partnerKey = "PartnerKey";
-                    if (partnerKey.Equals(mbsPartner, StringComparison.OrdinalIgnoreCase))
-                    {
-                        var claims = new Claim[]
-                        {
-                            new Claim(ClaimTypes.Role, ((int)Enum.Parse(typeof(UserRole), UserRole.Visitor.ToString())).ToString())
-                        };
-                        context.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme));
-                        context.Success();
-                        return Task.CompletedTask;
-                    }
-                }
-
                 return Task.CompletedTask;
             };
         }

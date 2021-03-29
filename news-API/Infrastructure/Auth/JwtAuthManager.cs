@@ -248,7 +248,7 @@ namespace news_API.Infrastructure.Auth
             {
                 string key = string.Format(CacheKeys.AUTHEN, userName.ToUpper());
                 var backlist = RedisDb.SortedSetRange(key);
-                return backlist.Any(x => x.Equals(accessToken ?? "") || x.Equals(refreshToken ?? ""));
+                return backlist.Any(x => x.Equals(accessToken ?? ""));
             }
             catch (Exception ex)
             {

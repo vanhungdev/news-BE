@@ -1,4 +1,6 @@
-﻿using StackExchange.Redis;
+﻿using news.Infrastructure.Configuration;
+using news.Infrastructure.Utilities;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,9 @@ namespace news.Infrastructure.Database
 {
     public class RedisDb
     {
+        private static AppSettings _appSettings => AppSettingServices.Get;
+        private static string _serverRead = _appSettings.RedisSettings.ServerRead;
+        private static int _databaseNumber = _appSettings.RedisSettings.DatabaseNumber;
         /// <summary>
         /// SortedSetRemoveRangeByScore
         /// </summary>
@@ -16,10 +21,10 @@ namespace news.Infrastructure.Database
         /// <returns></returns>
         public static void saveTokenToBlackRedis(string key, string value)
         {
-            using (var redis = ConnectionMultiplexer.Connect("127.0.0.1:6379"))
+            using (var redis = ConnectionMultiplexer.Connect(_serverRead))
             {
-                IDatabase database = redis.GetDatabase(0);
-                //database.SetAdd(key, Encoding.UTF8.GetBytes(value));
+                IDatabase database = redis.GetDatabase(_databaseNumber);
+                database.ListRightPush(key, Encoding.UTF8.GetBytes(value));
             }
         }
 
@@ -32,9 +37,9 @@ namespace news.Infrastructure.Database
         /// <returns></returns>
         public static void SortedSetRemoveRangeByScore(string key, double score)
         {
-            using (var redis = ConnectionMultiplexer.Connect("127.0.0.1:6379"))
+            using (var redis = ConnectionMultiplexer.Connect(_serverRead))
             {
-                IDatabase database = redis.GetDatabase();
+                IDatabase database = redis.GetDatabase(_databaseNumber);
                 database.SortedSetRemoveRangeByScore(key, 0, score);
             }
         }
@@ -47,11 +52,11 @@ namespace news.Infrastructure.Database
         public static List<string> SortedSetRange(string key)
         {
             var result = new List<string>();
-            using (var redis = ConnectionMultiplexer.Connect("127.0.0.1:6379"))
+            using (var redis = ConnectionMultiplexer.Connect(_serverRead))
             {
                 // error is here
-                IDatabase database = redis.GetDatabase(0);
-                var aresult = database.SortedSetRangeByScore(key);
+                IDatabase database = redis.GetDatabase(_databaseNumber);
+                result = database.ListRange(key,0,-1).Select(x => x.ToString()).ToList();
             }
             return result;
         }

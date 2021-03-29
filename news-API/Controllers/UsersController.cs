@@ -45,9 +45,9 @@ namespace news_API.Controllers
             var result = ResultObject.Ok<authReponse>(response,"Đăng nhập thành công");
             return Ok(result);
         }
-
+        [Authorize]
         [HttpGet("logout")]
-        public IActionResult logout(string Username)
+        public IActionResult logout()
         {
             HttpContext.Request.Headers.TryGetValue("HEADER_AUTHORIZATION", out var mbsExternal);
             var userName = User.FindFirstValue(Consts.CLAIM_USERNAME);

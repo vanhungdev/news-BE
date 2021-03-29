@@ -20,7 +20,6 @@ namespace news.Application.Common
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-
             //
             //services.AddSingleton<IQuery, Sqlsever>();
             return services;

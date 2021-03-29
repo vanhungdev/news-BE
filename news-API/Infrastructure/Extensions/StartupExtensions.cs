@@ -12,6 +12,7 @@ using news.Application.Common;
 using news.Database;
 using news.Infrastructure.Configuration;
 using news.Infrastructure.Consts;
+using news.Infrastructure.Database;
 using news_API.Infrastructure.Auth;
 using news_API.Infrastructure.Filters;
 using news_API.Services;
@@ -74,17 +75,16 @@ namespace news_API.Infrastructure.Extensions
         /// <returns></returns>
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            //string secretKey = configuration.GetValue<string>("AppSettings:SecuritySettings:JwtSecretKey");
-
             services.AddAuthentication(x =>
             {
-
+                //set default JwtBearer for authen
                 x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
+                //configure the JWT Bearer token
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -142,6 +142,7 @@ namespace news_API.Infrastructure.Extensions
             //data
             services.AddSingleton<IQuery, Sqlsever>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRedisCacheDB, RedisCacheDB>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton(resolver => resolver.GetRequiredService<IOptionsMonitor<AppSettings>>().CurrentValue);
             return services;

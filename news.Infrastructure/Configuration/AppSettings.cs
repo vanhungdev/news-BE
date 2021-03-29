@@ -9,6 +9,8 @@ namespace news.Infrastructure.Configuration
     {
         public CommonSettings CommonSettings { get; set; }
         public SecuritySettings SecuritySettings { get; set; }
+        public RedisSettings RedisSettings { get; set; }
+        public ConnectionStringSettings ConnectionStringSettings { get; set; }
         public string AppName { get; set; }
     }
     public class AppSettingDetail
@@ -19,7 +21,16 @@ namespace news.Infrastructure.Configuration
 
             public int IsMaintain { get; set; }
         }
-
+        public class RedisSettings
+        {
+            public string ServerWrite { get; set; }
+            public string ServerRead { get; set; }
+            public int DatabaseNumber { get; set; }
+        }
+        public class ConnectionStringSettings
+        {
+            public string SqlServerConnectString { get; set; }
+        }
         public class SecuritySettings
         {
             public string PartnerKey { get; set; }
