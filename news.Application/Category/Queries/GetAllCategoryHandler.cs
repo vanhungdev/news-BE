@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MediatR.Pipeline;
 using news.Database;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,10 @@ namespace news.Application.Category.Queries
             string sql = "getAlltopic";
             var listCate = _query.Query<Entities.Category>(1, sql, null).ToList();
             return await Task.FromResult(listCate);
-        }       
+        }     
+        
     }
+    
+    
+
 }

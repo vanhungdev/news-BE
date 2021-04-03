@@ -10,7 +10,7 @@ namespace news.Infrastructure.Database
 {
     public interface IRedisCacheDB
     {
-         Task<IEnumerable<T>> setOrGetdatabaseFromRidisDBAsync<T>(string key, IEnumerable<T> List);    
+         Task<IEnumerable<T>> setOrGetdatabaseFromRidisDB<T>(string key, IEnumerable<T> List);    
     }
     public class RedisCacheDB: IRedisCacheDB
     {
@@ -20,7 +20,7 @@ namespace news.Infrastructure.Database
             _distributedCache = distributedCache;
         }
 
-        public async Task<IEnumerable<T>> setOrGetdatabaseFromRidisDBAsync<T>(string key, IEnumerable<T> List)
+        public async Task<IEnumerable<T>> setOrGetdatabaseFromRidisDB<T>(string key, IEnumerable<T> List)
         {
             string serializedList;
             var redisList = await _distributedCache.GetAsync(key);

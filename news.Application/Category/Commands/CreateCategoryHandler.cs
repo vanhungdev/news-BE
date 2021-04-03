@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using FluentValidation;
 using MediatR;
+using MediatR.Pipeline;
 using news.Database;
 using news.Infrastructure.Utilities;
 using System;
@@ -37,8 +38,7 @@ namespace news.Application.Category.Commands
 
         public async Task<int> Handle(CreateCategoryRequest request, CancellationToken cancellationToken)
         {
-            request.Slug = Helper.ToSlug(request.Name);
-            request.Id = 0;
+          
             string sql = "createCategory";
             DynamicParameters parameter = CreateCategoryHandler.addAllParameterCategory(request);
             int result = _query.Execute(sql, parameter);
@@ -66,9 +66,27 @@ namespace news.Application.Category.Commands
     {
         public CreateCategoryRequestValidator()
         {   
-            RuleFor(v => v.Name).NotNull();
-            RuleFor(v => v.Slug).NotNull();
-            RuleFor(v => v.Parentid).NotNull();
+            RuleFor(v => v.Name).NotEmpty().WithMessage("Name không được trống.");
+            RuleFor(v => v.Slug).NotEmpty().WithMessage("Slug Không được trống");
+            RuleFor(v=>v.Created_at).GreaterThan(DateTime.MinValue);
+        }
+    }
+    // được gọi sau khi validator
+    class CreateCategoryPreProcessor : IRequestPreProcessor<CreateCategoryRequest>
+    {
+        public Task Process(CreateCategoryRequest request, CancellationToken cancellationToken)
+        {
+            request.Slug = Helper.ToSlug(request.Name);
+            request.Id = 0;
+            return Task.CompletedTask;
+        }
+    }
+    // được gọi trước khi reponse về action
+    class CreateCategoryRequestPostProcessor : IRequestPostProcessor<CreateCategoryRequest, int>
+    {
+        public Task Process(CreateCategoryRequest request, int  repons, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
     }
 }

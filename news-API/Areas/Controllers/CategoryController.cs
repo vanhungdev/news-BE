@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using news.Application.Category.Commands;
 using news.Application.Category.Queries;
 using news.Infrastructure.Models;
+using news_API.Infrastructure.Filters;
 
 namespace news_API.Areas.Controllers
 {
@@ -21,11 +22,14 @@ namespace news_API.Areas.Controllers
         }
         [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
+
+
         public async Task<ActionResult> getAll()
         {
             var result = _mediator.Send(new GetAllCategory());
             return Ok(await result);
         }
+
         [Authorize(Roles = "8888,20,9999")]
         [HttpGet]
         public async Task<ActionResult> findById(int id)
@@ -38,7 +42,7 @@ namespace news_API.Areas.Controllers
         public async Task<ActionResult> edit([FromBody] EditCategotyRequest topic)
         {
             int editStatus = await _mediator.Send(topic);
-            if (editStatus == 1)
+            if (editStatus > 0)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Cập nhật thành công."));
             }
@@ -49,7 +53,7 @@ namespace news_API.Areas.Controllers
         public async Task<ActionResult> Create([FromBody] CreateCategoryRequest topic)
         {
             int editStatus = await _mediator.Send(topic);
-            if (editStatus == 1)
+            if (editStatus > 0)
             {
                 return Ok(ResultObject.Ok<NullDataType>(null, "Thêm thành công."));
             }

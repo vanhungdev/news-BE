@@ -29,6 +29,7 @@ namespace news_API.Controllers
             var result = _mediator.Send(new GetAllCategory());
             return Ok(await result);
         }
+
         [HttpGet("findById/{id}")]
         public async Task<ActionResult> findById(int id)
         {
@@ -41,6 +42,14 @@ namespace news_API.Controllers
         {
             var result = _mediator.Send(new GetCategoryBySlug { slug = slug });
             return Ok(await result);
+        }
+
+        [Authorize(Roles = "8888,20,9999")]
+        [HttpGet("getAllCategoryTrash")]
+        public async Task<ActionResult> getAllCategoryTrash()
+        {
+            var list = await _mediator.Send(new GetAllTopicTrashCategoryRequest());
+            return Ok(list);
         }
     }
 }

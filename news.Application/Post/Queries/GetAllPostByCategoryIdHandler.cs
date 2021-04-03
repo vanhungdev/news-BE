@@ -30,5 +30,6 @@ namespace news.Application.Post.Queries
             IEnumerable<Entities.Post> listPost = _query.Query<Entities.Post>(1, sql, parameter);
             return await Task.FromResult(listPost);
         }
+  
     }
 }

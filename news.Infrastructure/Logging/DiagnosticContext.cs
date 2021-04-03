@@ -20,7 +20,6 @@ namespace news.Infrastructure.Logging
             if (request.QueryString.HasValue) diagnosticContext.Set("QueryString", request.QueryString.Value);
             diagnosticContext.Set("ContentType", httpContext.Response.ContentType);
             diagnosticContext.Set("User", httpContext.User?.FindFirstValue(Consts.Consts.CLAIM_USERNAME) ?? "None");
-
             var endpoint = httpContext.GetEndpoint();
             if (endpoint is object)
             {

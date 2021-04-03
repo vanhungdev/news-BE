@@ -33,9 +33,10 @@ namespace news_API.Infrastructure.Extensions
         {
             services.AddControllers(options =>
             {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));              
                 options.Filters.Add(typeof(CheckSumAttribute));
                 options.Filters.Add(typeof(ValidateModelStateFilter));
+
             }).AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;

@@ -11,9 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ErrorLogs\_api_category_getall\**" />
     <Compile Remove="public\**" />
+    <Content Remove="ErrorLogs\_api_category_getall\**" />
     <Content Remove="public\**" />
+    <EmbeddedResource Remove="ErrorLogs\_api_category_getall\**" />
     <EmbeddedResource Remove="public\**" />
+    <None Remove="ErrorLogs\_api_category_getall\**" />
     <None Remove="public\**" />
   </ItemGroup>
 
@@ -45,8 +49,6 @@
 
   <ItemGroup>
     <Folder Include="ErrorLogs\" />
-    <Folder Include="ErrorLogs\Other\" />
-    <Folder Include="ErrorLogs\_api_category_getall\" />
   </ItemGroup>
 
 

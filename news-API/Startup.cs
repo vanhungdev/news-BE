@@ -30,11 +30,13 @@ namespace news_API
             services.AddCustomMvc(Configuration);
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddHttpServices(Configuration);     
+
             //redis cache
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = Helper.Settings.RedisSettings.ServerRead;
             });
+          
 
             //auththen JWT
             services.AddCustomAuthentication(Configuration);
@@ -50,16 +52,15 @@ namespace news_API
             app.ApplicationServices.CreateLoggerConfiguration(env);
 
             //add read appseting.json
-            AppSettingServices.Services = app.ApplicationServices;
-            // 
+            AppSettingServices.Services = app.ApplicationServices; 
+            //
             Helper.ConfigureContextAccessor(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
+            //config logging
             LoggingHelper.Config(app.ApplicationServices.GetRequiredService<IDiagnosticContext>());
-            //logging
             app.UseSerilogRequestLogging(opts =>
             {
                 opts.EnrichDiagnosticContext = DiagnosticContext.EnrichFromRequest;
             });
-
             app.UseSerilogRequestLogging();           
             //swagger
             app.UseSwagger();
