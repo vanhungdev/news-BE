@@ -68,7 +68,6 @@ namespace news_API.Infrastructure.Middleware
             response.Body.Seek(0, SeekOrigin.Begin);
             var bodyAsText = await new StreamReader(response.Body).ReadToEndAsync();
             response.Body.Seek(0, SeekOrigin.Begin);
-
             return bodyAsText;
         }
     }
